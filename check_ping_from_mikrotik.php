@@ -479,8 +479,12 @@ if ($result=check_mik_ping($options['H'],$options['h'],$options['n'],$options['u
         if ($time) {
                 $pingvalue=$lossvalue=0;
                 foreach ($time as $data) {
-                        preg_match('/^.*=(\d*).*/',$data,$m);
-                        $pingvalue=$pingvalue+$m[1];
+                        preg_match('/^.*=((\d*)ms(\d*)us|(\d*)ms|(\d*)us).*/',$data,$m);
+                        $delay = (isset($m[2])&&$m[2]?$m[2]:0)+
+                                 (isset($m[4])&&$m[4]?$m[4]:0)+
+                                 (isset($m[3])&&$m[3]?$m[3]/1000:0)+
+                                 (isset($m[5])&&$m[5]?$m[5]/1000:0);
+                        $pingvalue=$pingvalue+$delay;
                 }
                 foreach ($loss as $dataloss) {
                         preg_match('/^.*=(\d*).*/',$dataloss,$l);
